@@ -1,17 +1,50 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# Triple Triad
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+## 技術スタック
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+- Jetpack Compose
+- KMP
 
-* `/shared` is for the code that will be shared between all targets in the project.
-  The most important subfolder is `commonMain`. If preferred, you can add code to the platform-specific folders here too.
+## アーキテクチャ
 
+### 概要
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+本アプリではベースのアーキテクチャとして **Flux アーキテクチャ** が採用されています。
+[Zustand](https://github.com/pmndrs/zustand) を参考に、幾つかのStoreを使用しています。
+
+![アーキテクチャ](./archtecture.png)
+
+## モジュール・パッケージの構成
+
+### 全体像
+
+- [composeApp module](#composeapp-module)
+- [iosApp module](#iosapp-module)
+- [shared module](#shared-module)
+
+### 詳細
+
+#### composeApp module
+
+Androidアプリを構築するためのモジュール。
+
+- composeApp
+    - src/androidMain/kotlin/
+        - App ... アプリの実装。
+        - me/tbsten/tripletriad/
+            - MainActivity.kt ... アプリのエントリーポイント
+
+#### shared module
+
+FluxのStoreやRepositoryなど、両OSで共通するドメイン層のコードを格納します。
+
+- shared
+    - src/commonMain/kotlin/
+        - me/tbsten/tripletriad/shared/
+            - data/ ... Repositoryなどを配置する。
+            - store/ ... 各Storeと関連するState, Actionを配置する。
+            - flux/ ... 独自のfluxライブラリ。将来 fluxライブラリが推奨される出てきた際にはここのコードと置き換える。
+
+#### iosApp module
+
+現在は使用していません。将来的にiOS版をサポートすることになった際に使用される予定です。
